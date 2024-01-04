@@ -1,78 +1,4 @@
----
-title: JavaScript의 타입과 자료구조
-slug: Web/JavaScript/Data_structures
-l10n:
-  sourceCommit: 270351317fdaa57ba9123a19aa281e9e40bb0baa
----
-
-{{jsSidebar("More")}}
-
-모든 프로그래밍 언어에는 내장된 자료구조가 존재하지만, 보통 그 내용은 언어마다 다릅니다. 이 글에서는 JavaScript에서 사용할 수 있는 내장 자료구조와 그 속성에 대해 알아보겠습니다. 그러면 이 자료구조들을 다른 자료구조 개발에 사용할 수 있을 것입니다.
-
-[언어 개요](/ko/docs/Web/JavaScript/Language_overview)는 일반적인 데이터 타입에 대한 유사한 정리된 내용을 제공하지만, 다른 언어와 더 많은 비교를 제공합니다.
-
-## 동적 및 약타입
-
-JavaScript는 [동적 타입](https://en.wikipedia.org/wiki/Type_system#DYNAMIC)이 있는 [동적](https://en.wikipedia.org/wiki/Dynamic_programming_language) 언어입니다. JavaScript의 변수는 어떤 특정 타입과 연결되지 않으며, 모든 타입의 값으로 할당 (및 재할당) 가능합니다.
-
-```js
-let foo = 42; // foo는 이제 숫자입니다
-foo = "bar"; // foo는 이제 문자열입니다
-foo = true; // foo는 이제 불리언입니다
-```
-
-JavaScript는 또한 [약타입](https://en.wikipedia.org/wiki/Strong_and_weak_typing) 언어이기도 합니다. 즉, 작업에 타입 오류가 발생하는 대신, 일치하지 않는 타입이 포함된 경우 암시적 타입 변환이 가능합니다.
-
-```js
-const foo = 42; // foo는 숫자입니다.
-const result = foo + "1"; // JavaScript는 foo를 문자열로 강제 변환하므로, 다른 피연산자와 연결할 수 있습니다.
-console.log(result); // 421
-```
-
-암시적 형변환은 매우 편리하지만, 개발자가 변환을 수행할 의도가 없거나, 다른 방향으로 변환하려는 경우(예: 숫자에서 문자열 대신, 문자열에서 숫자로 변환하는 것) 잠재적인 오류(footgun)가 될 수 있습니다.
-[기호](#symbol_타입) 및 [BigInts](#bigint_타입)의 경우, JavaScript는 의도적으로 특정 암시적 타입 변환을 허용하지 않습니다.
-
-## 원시 값(Primitive values)
-
-[Object](#객체)를 제외한 모든 타입은 언어의 최하위 수준에서 직접 표현되는 [불변](/ko/docs/Glossary/Immutable) 값을 정의합니다. 이러한 타입의 값을 '원시 값'이라고 합니다.
-
-[`null`](/ko/docs/Web/JavaScript/Reference/Operators/null)을 제외한 모든 기본 타입은 [`typeof`](/ko/docs/Web/JavaScript/Reference/Operators/typeof) 연산자로 테스트할 수 있습니다. `typeof null`은 `"object"`를 반환하므로 `=== null`을 사용하여 `null`을 테스트해야 합니다.
-
-[`null`](/ko/docs/Web/JavaScript/Reference/Operators/null) 및 [`undefined`](/ko/docs/Web/JavaScript/Reference/Global_Objects/undefined)를 제외한, 모든 원시 타입에는 원시 값으로 작업하는 데 유용한 메서드를 제공하는 해당 객체 래퍼 타입이 있습니다. 예를 들어, [`Number`](/ko/docs/Web/JavaScript/Reference/Global_Objects/Number) 객체는 [`toExponential()`](/ko/docs/Web/JavaScript/Reference/Global_Objects/Number/toExponential)와 같은 메서드를 제공합니다. 원시 값에서 속성에 접근하면, JavaScript는 값을 해당 래퍼 객체로 자동으로 감싸는 대신 객체의 속성에 접근합니다. 그러나 `null` 또는 `undefined`에서 속성에 접근하면, `TypeError` 예외가 발생하므로 [선택적 체이닝](/ko/docs/Web/JavaScript/Reference/Operators/Optional_chaining) 연산자를 도입해야 합니다.
-
-| Type                              | `typeof` return value | Object wrapper        |
-| --------------------------------- | --------------------- | --------------------- |
-| [Null 타입](#null_타입)           | `"object"`            | N/A                   |
-| [Undefined 타입](#undefined_타입) | `"undefined"`         | N/A                   |
-| [Boolean 타입](#boolean_타입)     | `"boolean"`           | {{jsxref("Boolean")}} |
-| [Number 타입](#Number_타입)       | `"number"`            | {{jsxref("Number")}}  |
-| [BigInt 타입](#bigint_타입)       | `"bigint"`            | {{jsxref("BigInt")}}  |
-| [String 타입](#string_타입)       | `"string"`            | {{jsxref("String")}}  |
-| [Symbol 타입](#symbol_타입)       | `"symbol"`            | {{jsxref("Symbol")}}  |
-
-객체 래퍼 클래스의 참조 페이지에는 각 타입에 사용할 수 있는 메서드 및 속성에 대한 자세한 정보와, 원시 타입 자체의 의미 체계에 대한 자세한 설명이 포함되어 있습니다.
-
-### Null 타입
-
-Null 타입은 [`null`](/ko/docs/Web/JavaScript/Reference/Operators/null)이라는 오직 하나의 값만 가질 수 있습니다.
-
-### Undefined 타입
-
-Undefined 타입은 [`undefined`](/ko/docs/Web/JavaScript/Reference/Global_Objects/undefined)이라는 오직 하나의 값만 가질 수 있습니다.
-
-개념적으로, `undefined`는 값이 없음을 의미하고, `null`은 객체가 없음을 의미합니다.
-([`typeof null === "object"`](/ko/docs/Web/JavaScript/Reference/Operators/typeof#typeof_null)에 대한 변명이 될 수도 있습니다). 일반적으로 값이 없는 경우 언어의 기본값은 `undefined`입니다.
-
-- 반환 값이 없는 [`return`](/ko/docs/Web/JavaScript/Reference/Statements/return)문(`return;`)은 암시적으로 `undefined`를 반환합니다.
-- 존재하지 않는 [객체](/ko/docs/Web/JavaScript/Reference/Global_Objects/Object) 속성에 접근 (`obj.iDontExist`) 하면 `undefined`가 반환됩니다.
-- 초기화(`let x;`)가 없는 변수 선언은 변수를 `undefined`로 암시적으로 초기화합니다.
-- {{jsxref("Array.prototype.find()")}} 및 {{jsxref("Map.prototype.get()")}}와 같은 대부분의 메서드는, 요소를 찾을 수 없을 때 `undefined`를 반환합니다.
-
-`null`은 언어의 핵심적인 부분에선 덜 자주 사용됩니다. 가장 중요한 위치는 [prototype chain](/ko/docs/Web/JavaScript/Inheritance_and_the_prototype_chain)의 끝부분입니다. 이어서, {{jsxref("Object.getPrototypeOf()")}}, {{jsxref("Object.create()")}} 등 프로토타입과 상호 작용하는 메서드는 `undefined` 대신 `null`을 받거나 반환합니다.
-
-`null`은 [키워드](/ko/docs/Web/JavaScript/Reference/Lexical_grammar#keywords)이지만, `undefined`는 전역 속성인 일반적인 [식별자](/ko/docs/Web/JavaScript/Reference/Lexical_grammar#identifiers)입니다. 실제로는 `undefined`가 재정의되거나 가려져서는 안 되기 때문에 그 차이는 미미합니다.
-
-### Boolean 타입
+N_
 
 {{jsxref("Boolean")}} 타입은 논리 요소를 나타내며 `true`와 `false` 두 가지의 값을 가질 수 있습니다.
 
@@ -80,7 +6,7 @@ Undefined 타입은 [`undefined`](/ko/docs/Web/JavaScript/Reference/Global_Objec
 
 ### Number 타입
 
-{{jsxref("Number")}} 타입은 [배정밀도 64비트 이진 형식 IEEE 754 값](/ko/docs/Web/JavaScript/Reference/Global_Objects/Number#number_encoding)입니다. 2<sup>-1074</sup> ({{jsxref("Number.MIN_VALUE")}}) 와 2<sup>1024</sup> ({{jsxref("Number.MAX_VALUE")}}) 사이의 양수 부동 소수점 뿐만 아니라, -2<sup>-1074</sup> 와 -2<sup>1024</sup> 사이의 음수 부동 소수점 숫자도 저장할 수 있지만, (2<sup>53</sup> − 1) ({{jsxref("Number.MIN_SAFE_INTEGER")}}) 와 2<sup>53</sup> − 1 ({{jsxref("Number.MAX_SAFE_INTEGER")}}) 범위의 정수만 안전하게 저장할 수 있습니다. 이 범위를 벗어나면, JavaScript는 더 이상 정수를 안전하게 표시할 수 없습니다. 대신 배정밀도 부동 소수점 근사값으로 표시됩니다. {{jsxref("Number.isSafeInteger()")}}를 사용하여 숫자가 안전한 정수 범위 내에 있는지 확인할 수 있습니다.
+{{jsxref("Number")}} 타입은 [배정밀도 64비트 이진 형식 IEEE 754 값](/ko/docs/Web/JavaScript/Reference/Global_Objects/Number#number_encoding)입니다. 2<sup>-1074</sup> ({{jsxref("Number.MIN_VALUE")}}) 와 2<sup>1024</sup> ({{jsxref("Number.MAX_VALUE")}}) 사이의 양수 부동 소수점 뿐만 아니라, -2<sup>-1074</sup> 와 -2<sup>1024</sup> 사이의 음수 부동 소수점 숫자도 저장할 수 있지만, -(2<sup>53</sup> − 1) ({{jsxref("Number.MIN_SAFE_INTEGER")}}) 와 2<sup>53</sup> − 1 ({{jsxref("Number.MAX_SAFE_INTEGER")}}) 범위의 정수만 안전하게 저장할 수 있습니다. 이 범위를 벗어나면, JavaScript는 더 이상 정수를 안전하게 표시할 수 없습니다. 대신 배정밀도 부동 소수점 근사값으로 표시됩니다. {{jsxref("Number.isSafeInteger()")}}를 사용하여 숫자가 안전한 정수 범위 내에 있는지 확인할 수 있습니다.
 
 ±(2<sup>-1074</sup> to 2<sup>1024</sup>) 범위를 벗어나는 값은 자동으로 변환됩니다.
 
